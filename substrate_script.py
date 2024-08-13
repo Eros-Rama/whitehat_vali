@@ -18,8 +18,6 @@ block_number = 3593985
 block_hash = substrate.get_block_hash(block_id=block_number)
 block = substrate.get_block(block_hash=block_hash)
 extrinsics = block["extrinsics"]
-x = extrinsics[7]
-
 
 # events = substrate.get_events(block_hash=block_hash)
 # event = events[0]
@@ -30,9 +28,6 @@ x = extrinsics[7]
 #     print(event)
 #     print(event_extrinsic_idx)
 
-
-
-print(x)
 for idx, extrinsic in enumerate(extrinsics):
 
 # if x:
