@@ -1,11 +1,13 @@
 import os
 import django
 import sys
-import time
+from datetime import datetime
+import pytz
 sys.path.append('/Users/mac/Library/Python/3.9/lib/python/site-packages')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myproject.settings')
 django.setup()
 from myapp.models import Extrinsic  # Import your model
+from myapp.models import Block
 from substrateinterface.base import SubstrateInterface
 
 substrate = SubstrateInterface(
@@ -21,9 +23,9 @@ block = substrate.get_block(block_hash=block_hash)
 parent_hash = block['header']['parentHash']
 state_root = block['header']['stateRoot']
 extrinsics_root = block['header']['extrinsicsRoot']
-digest = block['header']['digest']
+# digest = block['header']['digest']
 extrinsics = block["extrinsics"]
-print(block)
+# print(block)
 # print(extrinsics)
 events = substrate.get_events(block_hash=block_hash)
 
@@ -38,6 +40,32 @@ events = substrate.get_events(block_hash=block_hash)
 
 block_timestamp = None
 
+for extrinsic in extrinsics:
+    if hasattr(extrinsic, 'value'):
+        extrinsic = getattr(extrinsic, 'value')
+        if 'call' in extrinsic:
+            call = extrinsic['call']
+            call_function = call['call_function']
+            call_module= call['call_module']
+            call_args = call['call_args']
+            if call_function == 'set' and call_module == 'Timestamp':
+                block_timestamp = call_args[0]['value']
+
+if block_timestamp is not None:
+    block_timestamp = datetime.fromtimestamp(block_timestamp / 1000, tz=pytz.UTC)
+
+
+
+Block.objects.create(
+    block_id = block_number,
+    block_hash = block_hash,
+    parentHash = parent_hash,
+    stateRoot = state_root,
+    extrinsicsRoot = extrinsics_root,
+    # digest = digest,
+    timestamp = block_timestamp,
+)
+block_instance = Block.objects.get(block_id = 3593985)
 for idx, extrinsic in enumerate(extrinsics):
     extrinsic_events = []
     extrinsic_success = 0
@@ -75,6 +103,7 @@ for idx, extrinsic in enumerate(extrinsics):
         if 'address' in extrinsic:
             extrinsic_address = extrinsic['address']
         # print(extrinsic_address)
+        extrinsic_type = []
         if 'call' in extrinsic:
             call = extrinsic['call']
             call_index = call['call_index']
@@ -91,8 +120,20 @@ for idx, extrinsic in enumerate(extrinsics):
                     extrinsic_netuid = arg['value']
                     # print("Netuid value:", netuid_value)
                     break
+        extrinsic_type.append(call_index)
+        extrinsic_type.append(call_function)
+        extrinsic_type.append(call_module)
+
+        # print(extrinsic_type)
             # print(extrinsic_netuid)
-        
+# print(block_timestamp)
+# print(block_number)
+# print(block_hash)
+# print(parent_hash)
+# print(state_root)
+# print(extrinsics_root)
+# print(digest)
+# print(block_timestamp)
     # print(
     #     extrinsic_hash,
     #     extrinsic_netuid,
@@ -120,35 +161,19 @@ for idx, extrinsic in enumerate(extrinsics):
         hash = extrinsic_hash,
         netuid=extrinsic_netuid,
         address = extrinsic_address,
-        block_number = block_number,
+        block = block_instance,
         idx = extrinsic_idx,
-        block_hash = block_hash,
         signature = extrinsic_signature,
         tip = extrinsic_tip,
         nonce = extrinsic_nonce,
         era = extrinsic_era,
-        call_index = call_index,
-        call_function = call_function,
-        call_module = call_module,
+        type = extrinsic_type,
         call_args = call_args,
         result = extrinsic_result,
         events = extrinsic_events,
         # extrinsic_call = extrinsic_call
     )
 
-if block_timestamp is not None:
-    time_struct = time.gmtime(block_timestamp / 1000.0)
-    block_timestamp = time.strftime('%B %d, %Y, %I:%M:%S %p (UTC)', time_struct)
-
-Block.objects.create(
-    number = block_number
-    hash = block_hash
-    parent_hash = parent_hash
-    state_root = state_root
-    extrinsics_root = extrinsics_root
-    digest = digest
-    timestamp = block_timestamp   
-)
 
 
 
