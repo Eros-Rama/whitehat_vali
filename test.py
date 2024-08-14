@@ -1,9 +1,15 @@
-numbers = [23, 15, 67, 10, 0]
+import time
 
-# Format each number to be four characters long with leading zeros
-formatted_numbers = [f"{num:04}" for num in numbers]
-p = 0
-number = f"{p:04}"
-print (number)
-# Print the formatted numbers
-print(formatted_numbers)
+# Timestamp in milliseconds
+timestamp_ms = 1723513908002
+
+# Convert milliseconds to seconds
+timestamp_s = timestamp_ms / 1000.0
+
+# Convert to a time struct
+time_struct = time.gmtime(timestamp_s)
+
+# Format the time struct to a human-readable string
+human_readable_date = time.strftime('%B %d, %Y, %I:%M:%S %p (UTC)', time_struct)
+
+print(human_readable_date)

@@ -1,6 +1,7 @@
 import os
 import django
 import sys
+import time
 sys.path.append('/Users/mac/Library/Python/3.9/lib/python/site-packages')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myproject.settings')
 django.setup()
@@ -18,6 +19,7 @@ block_number = 3593985
 block_hash = substrate.get_block_hash(block_id=block_number)
 block = substrate.get_block(block_hash=block_hash)
 extrinsics = block["extrinsics"]
+print(block)
 # print(extrinsics)
 events = substrate.get_events(block_hash=block_hash)
 # event = events[0]
@@ -29,10 +31,9 @@ events = substrate.get_events(block_hash=block_hash)
 #     print(event_extrinsic_idx)
 
 
+block_timestamp = None
 
 for idx, extrinsic in enumerate(extrinsics):
-    if idx < 2:
-        continue
     extrinsic_events = []
     extrinsic_success = 0
     for event in events:
@@ -53,7 +54,7 @@ for idx, extrinsic in enumerate(extrinsics):
     extrinsic_netuid = extrinsic_address = extrinsic_hash = None
     call = call_index = call_function = call_module = call_args = None
     extrinsic_nonce = extrinsic_tip = extrinsic_era = extrinsic_signature = None
-    extrinsic_idx = f"{idx:04}"
+    extrinsic_idx = str(block_number) + '-' + f"{idx:04}"
     if hasattr(extrinsic, 'value'):
         extrinsic = getattr(extrinsic, 'value')
         extrinsic_hash = extrinsic['extrinsic_hash']
@@ -75,6 +76,8 @@ for idx, extrinsic in enumerate(extrinsics):
             call_function = call['call_function']
             call_module= call['call_module']
             call_args = call['call_args']
+            if call_function == 'set' and call_module == 'Timestamp':
+                block_timestamp = call_args[0]['value']
         # print(extrinsic_call)
             for arg in call_args:
                 # Check if the argument name is 'netuid'
