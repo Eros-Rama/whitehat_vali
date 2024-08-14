@@ -18,10 +18,15 @@ substrate = SubstrateInterface(
 block_number = 3593985
 block_hash = substrate.get_block_hash(block_id=block_number)
 block = substrate.get_block(block_hash=block_hash)
+parent_hash = block['header']['parentHash']
+state_root = block['header']['stateRoot']
+extrinsics_root = block['header']['extrinsicsRoot']
+digest = block['header']['digest']
 extrinsics = block["extrinsics"]
 print(block)
 # print(extrinsics)
 events = substrate.get_events(block_hash=block_hash)
+
 # event = events[0]
 # # print(event)
 # if hasattr(event, 'value'):
@@ -131,7 +136,19 @@ for idx, extrinsic in enumerate(extrinsics):
         # extrinsic_call = extrinsic_call
     )
 
+if block_timestamp is not None:
+    time_struct = time.gmtime(block_timestamp / 1000.0)
+    block_timestamp = time.strftime('%B %d, %Y, %I:%M:%S %p (UTC)', time_struct)
 
+Block.objects.create(
+    number = block_number
+    hash = block_hash
+    parent_hash = parent_hash
+    state_root = state_root
+    extrinsics_root = extrinsics_root
+    digest = digest
+    timestamp = block_timestamp   
+)
 
 
 

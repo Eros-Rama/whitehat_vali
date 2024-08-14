@@ -1,0 +1,28 @@
+Metadata-Version: 2.1
+Name: substrateinterface
+Version: 1.0.0
+Summary: Library for interfacing with a Substrate node
+Home-page: https://github.com/polkascan/py-substrate-interface
+Author: Stichting Polkascan (Polkascan Foundation)
+Author-email: info@polkascan.org
+License: UNKNOWN
+Keywords: interface polkascan polkadot substrate blockchain rpc kusama
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Requires-Python: >=3.6, <4
+Description-Content-Type: text/markdown
+Provides-Extra: test
+Requires-Dist: coverage ; extra == 'test'
+Requires-Dist: pytest ; extra == 'test'
+
+> :warning: **Package is renamed to https://pypi.org/project/substrate-interface/**
+
+
