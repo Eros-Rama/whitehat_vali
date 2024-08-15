@@ -18,20 +18,19 @@ class Call(models.Model):
     call_module = models.CharField(max_length= 30, null = True)
 
 class Extrinsic(models.Model):
-    netuid = models.IntegerField(null = True)  # Assuming it's an integer
-    hash = models.CharField(max_length=64, unique=True)  # Assuming hash is a fixed-length string
-    address = models.CharField(max_length=255, null = True)  # Adjust length as needed
+    netuid = models.IntegerField(null = True)  
+    hash = models.CharField(max_length=64, unique=True)  
+    address = models.CharField(max_length=255, null = True)  
     block = models.ForeignKey(Block, on_delete=models.CASCADE, to_field='block_id', related_name='extrinsics')
-    idx = models.CharField(max_length= 12, null = True)  # Assuming index is an integer
-    signature = models.JSONField(null = True)  # Assuming signature is a dictionary (JSON)
-    tip = models.IntegerField(null = True)  # Assuming tip is an integer
-    nonce = models.IntegerField(null = True)  # Assuming nonce is an integer
-    era = models.CharField(max_length=10, null = True)  # Assuming era is a short string
+    idx = models.CharField(max_length= 12, null = True)  
+    signature = models.JSONField(null = True)  
+    tip = models.IntegerField(null = True)  
+    nonce = models.IntegerField(null = True)  
+    era = models.CharField(max_length=10, null = True)  
     call_index = models.ForeignKey(Call, on_delete=models.CASCADE, to_field='call_index', related_name='extrinsics')
-    call_args = models.JSONField(null = True)  # Assuming call_args is a list of dictionaries (JSON)
-    result = models.CharField(max_length=20, null = True)  # Assuming result is a short string like 'success'
-    events = models.JSONField(null = True)  # Assuming events is a list of dictionaries (JSON)
-
+    call_args = models.JSONField(null = True)  
+    result = models.CharField(max_length=20, null = True)  
+    events = models.JSONField(null = True)  
     def __str__(self):
         return f'Extrinsic {self.hash} at block {self.block_number}'
     
